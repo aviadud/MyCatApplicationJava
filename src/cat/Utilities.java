@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.nio.file.Path;
 import java.io.IOException;
 import java.net.URI;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -56,5 +58,37 @@ public class Utilities {
 		}
 		return result;
 	}
+	
+	
+	/**
+	 * Resize image while maintaining its original aspect ratio according to given maximum dimension.
+	 * @param originalImage - The original image.
+	 * @param maxDimension - The maximum dimension that need to be kept in the result image.
+	 * @return The original image after resizing to the given maximum dimension.
+	 */
+	public static BufferedImage resizeImage(BufferedImage originalImage, int maxDimension) {
+		int originalWidth = originalImage.getWidth();
+        int originalHeight = originalImage.getHeight();
+
+        // Calculate the new dimensions while maintaining the aspect ratio
+        int newWidth, newHeight;
+        if (originalWidth > originalHeight) {
+            newWidth = maxDimension;
+            newHeight = (originalHeight * maxDimension) / originalWidth;
+        } else {
+            newHeight = maxDimension;
+            newWidth = (originalWidth * maxDimension) / originalHeight;
+        }
+
+        // Create a new buffered image with the calculated dimensions
+        BufferedImage resizedImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+
+        // Draw the original image into the resized image
+        Graphics2D graphics = resizedImage.createGraphics();
+        graphics.drawImage(originalImage, 0, 0, newWidth, newHeight, null);
+        graphics.dispose();
+
+        return resizedImage;
+    }
 
 }
