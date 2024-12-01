@@ -20,13 +20,15 @@ import cat.Utilities;
  */
 public class CatApplication {
 	public static final int NUMBER_OF_IMAGES = 25;
+	public static final int MAX_IMAGES = 100;
 	public static final String WINDOW_TITLE = "Cat images application";
 	public static final String WELCOME_MESSAGE = "Welcom to my cat application. Click on the button to download and show a cat image.";
-	public static final String DOWNLOADING_MESSAGE = "Downloading cat images...";
+	public static final String DOWNLOADING_MESSAGE = "Downloading json from CatAPI..";
+	public static final String DOWNLOADING_IMAGE_MESSAGE = "Downloading cat image %d/%d";
 	public static final String CAT_IMAGE_MESSAGE = "Cat Image %d/%d";
 	public static final String FAILED_TO_DOWNLOAD_URLS_MESSAGE = "Failed to get a response from CatAPI. Try later.";
 	public static final String FAILED_TO_DOWNLOAD_IMAGE_MESSAGE = "Failed to download cat image %d/%d";
-	public static final int MAX_IMAGE_HEIGHT = 800;
+	public static final int MAX_IMAGE_HEIGHT = 1000;
 
 	private static CatApplication instance = null;
 	private boolean initiated;
@@ -40,6 +42,7 @@ public class CatApplication {
 	private JButton nextButton;
 	private JButton lastButton;
 	private ImageIcon catImage;
+	private JLabel imageLabel;
 	private int currentImageIndex = 0;
 
 	private CatApplication() {
@@ -60,7 +63,8 @@ public class CatApplication {
 		frame.getContentPane().add(buttonsPanel, BorderLayout.CENTER);
 
 		catImage = new ImageIcon();
-		frame.getContentPane().add(new JLabel(catImage), BorderLayout.SOUTH);
+		imageLabel = new JLabel(catImage);
+		frame.getContentPane().add(imageLabel, BorderLayout.SOUTH);
 	}
 
 	public static synchronized CatApplication getInstance() {
@@ -80,7 +84,7 @@ public class CatApplication {
 			System.out.println("CatApplication was already initiated.");
 			return false;
 		}
-		this.numberOfImages = numberOfImages;
+		this.numberOfImages = numberOfImages < MAX_IMAGES ? numberOfImages : MAX_IMAGES;
 		firstButton.addActionListener(new ActionListener() {
 			private boolean clicked = false;
 
@@ -89,6 +93,7 @@ public class CatApplication {
 				if (!clicked) {
 					clicked = true;
 					textLabel.setText(DOWNLOADING_MESSAGE);
+					firstButton.setEnabled(false);
 					new Thread() {
 						public void run() {
 							dowladCatImages();
@@ -120,6 +125,7 @@ public class CatApplication {
 		for (int i = 0; i < numberOfImages; i++) {
 			String url = catImageUrls.get(i);
 			try {
+				textLabel.setText(String.format(DOWNLOADING_IMAGE_MESSAGE, i + 1, numberOfImages));
 				catImages[i] = ImageIO.read(new URI(url).toURL());
 				if (catImages[i].getHeight() > MAX_IMAGE_HEIGHT) {
 					System.out.println(
@@ -137,21 +143,62 @@ public class CatApplication {
 
 	private void showDowladedCats() {
 		firstButton.setText("First");
+		firstButton.setEnabled(true);
 		previousButton = new JButton("Previous");
 		nextButton = new JButton("Next");
 		lastButton = new JButton("Last");
-		// TODO need to set buttons actions...
-
+		
+		// show all buttons
 		JButton[] buttonsArray = { previousButton, nextButton, lastButton };
 		for (JButton button : buttonsArray) {
 			buttonsPanel.add(button);
 		}
+		// change image to the first one
 		currentImageIndex = 0;
+		updateImage();
+		// set buttons functionality
+		firstButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				currentImageIndex=0;
+				updateImage();
+			}
+		});
+		previousButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (currentImageIndex > 0) {
+					currentImageIndex--;
+					updateImage();
+				}
+			}
+		});
+		nextButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (currentImageIndex < numberOfImages - 1) {
+					currentImageIndex++;
+					updateImage();
+				}
+			}
+		});
+		lastButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				currentImageIndex=numberOfImages - 1;
+				updateImage();
+			}
+		});
+	}
+	
+	private void updateImage() {
 		if (catImages[currentImageIndex] != null) {
-			textLabel.setText(String.format(CAT_IMAGE_MESSAGE, currentImageIndex, numberOfImages));
+			textLabel.setText(String.format(CAT_IMAGE_MESSAGE, currentImageIndex + 1, numberOfImages));
 			catImage.setImage(catImages[currentImageIndex]);
+			imageLabel.setVisible(true);
 		} else {
-			textLabel.setText(String.format(FAILED_TO_DOWNLOAD_IMAGE_MESSAGE, currentImageIndex, numberOfImages));
+			imageLabel.setVisible(false);
+			textLabel.setText(String.format(FAILED_TO_DOWNLOAD_IMAGE_MESSAGE, currentImageIndex + 1, numberOfImages));
 		}
 		frame.pack();
 	}

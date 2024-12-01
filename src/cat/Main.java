@@ -13,7 +13,7 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		CatApplication app = CatApplication.getInstance();
-		app.initiate();
+		app.initiate(30);
 
 	}
 
