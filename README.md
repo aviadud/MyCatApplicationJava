@@ -9,7 +9,7 @@ The aim is to explore different programming languages in a deeper way, incorpora
 
 * Web queries
 * Graphical User Interfaces (GUIs)
-*Basic multithreading
+* Basic multithreading
 
 ## Dependencies
 
