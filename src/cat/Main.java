@@ -14,7 +14,7 @@ package cat;
  * @author Aviadud
  */
 public class Main {
-	public static final int DEFAULT_NUMBER_OF_CATS = 30; /// < The default number of cat images to show
+	public static final int DEFAULT_NUMBER_OF_CATS = 30; ///< The default number of cat images to show
 
 	/**
 	 * The main method to launch the Cat application. The number of images is

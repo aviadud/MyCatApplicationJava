@@ -1,33 +1,38 @@
 package cat;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-
-import cat.Utilities;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.event.ActionListener;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.util.List;
-import java.lang.Thread;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 /**
- * The main class to handle the act application.
- * Flowing the singleton pattern design to prevent too more one instance of this window.
+ * The main class to handle the act application. Flowing the singleton pattern
+ * design to prevent too more one instance of this window. Show show the user a
+ * slide show of cat images after downloading them.
+ *
+ * @author Aviadud
  */
 public class CatApplication {
-	public static final int NUMBER_OF_IMAGES = 25;
-	public static final int MAX_IMAGES = 100;
-	public static final String WINDOW_TITLE = "Cat images application";
-	public static final String WELCOME_MESSAGE = "Welcom to my cat application. Click on the button to download and show a cat image.";
-	public static final String DOWNLOADING_MESSAGE = "Downloading json from CatAPI..";
-	public static final String DOWNLOADING_IMAGE_MESSAGE = "Downloading cat image %d/%d";
-	public static final String CAT_IMAGE_MESSAGE = "Cat Image %d/%d";
-	public static final String FAILED_TO_DOWNLOAD_URLS_MESSAGE = "Failed to get a response from CatAPI. Try later.";
-	public static final String FAILED_TO_DOWNLOAD_IMAGE_MESSAGE = "Failed to download cat image %d/%d";
-	public static final int MAX_IMAGE_HEIGHT = 1000;
+	public static final int NUMBER_OF_IMAGES = 25; ///< Default number of images to display.
+	public static final int MAX_IMAGES = 100; ///< The limit of images that can be shown. (result of the limit on a single call to the CatAPI).
+	public static final String WINDOW_TITLE = "Cat images application"; ///< Title for the application window.
+	public static final String WELCOME_MESSAGE = "Welcom to my cat application. Click on the button to download and show a cat image."; ///< Welcome message to great users when starting the application.
+	public static final String DOWNLOADING_MESSAGE = "Downloading json from CatAPI.."; ///< Message to show when downloading the json from the CatAPI.
+	public static final String DOWNLOADING_IMAGE_MESSAGE = "Downloading cat image %d/%d"; ///< Message to show when downloading an image.
+	public static final String CAT_IMAGE_MESSAGE = "Cat Image %d/%d"; ///< Message to show when cat image is shown.
+	public static final String FAILED_TO_DOWNLOAD_URLS_MESSAGE = "Failed to get a response from CatAPI. Try later."; ///< Failure to show when can't get response from CatAPI.
+	public static final String FAILED_TO_DOWNLOAD_IMAGE_MESSAGE = "Failed to download cat image %d/%d"; ///< Failure to show when can't download an image.
+	public static final int MAX_IMAGE_HEIGHT = 1000; ///< The limit on image height to prevent the window to too big.
 
 	private static CatApplication instance = null;
 	private boolean initiated;
@@ -44,11 +49,12 @@ public class CatApplication {
 	private JLabel imageLabel;
 	private int currentImageIndex = 0;
 
+	// Private constructor prevents instantiation from other classes.
 	private CatApplication() {
 		initiated = false;
 		// Initiate frame
 		frame = new JFrame(WINDOW_TITLE);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 		// Create panels
 		JPanel textPanel = new JPanel();
@@ -66,15 +72,22 @@ public class CatApplication {
 		frame.getContentPane().add(imageLabel, BorderLayout.SOUTH);
 	}
 
+	/**
+	 * Returns the single instance of the CatApplication class.
+	 * 
+	 * @return CatApplication instance.
+	 */
 	public static synchronized CatApplication getInstance() {
-		if (instance == null)
+		if (instance == null) {
 			instance = new CatApplication();
+		}
 		return instance;
 	}
 
 	/**
 	 * Initiate the cat application.
-	 * 
+	 *
+	 * @param numberOfImages the number of images to show.
 	 * @return If application was initiated. Return false if failed to initiate
 	 *         application or was already initiated.
 	 */
@@ -94,6 +107,7 @@ public class CatApplication {
 					textLabel.setText(DOWNLOADING_MESSAGE);
 					firstButton.setEnabled(false);
 					new Thread() {
+						@Override
 						public void run() {
 							dowladCatImages();
 						}
@@ -110,6 +124,12 @@ public class CatApplication {
 		return true;
 	}
 
+	/**
+	 * Initiate the cat application with default number of images.
+	 *
+	 * @return If application was initiated. Return false if failed to initiate
+	 *         application or was already initiated.
+	 */
 	public synchronized boolean initiate() {
 		return initiate(NUMBER_OF_IMAGES);
 	}
@@ -146,7 +166,7 @@ public class CatApplication {
 		previousButton = new JButton("Previous");
 		nextButton = new JButton("Next");
 		lastButton = new JButton("Last");
-		
+
 		// show all buttons
 		JButton[] buttonsArray = { previousButton, nextButton, lastButton };
 		for (JButton button : buttonsArray) {
@@ -159,7 +179,7 @@ public class CatApplication {
 		firstButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				currentImageIndex=0;
+				currentImageIndex = 0;
 				updateImage();
 			}
 		});
@@ -184,12 +204,12 @@ public class CatApplication {
 		lastButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				currentImageIndex=numberOfImages - 1;
+				currentImageIndex = numberOfImages - 1;
 				updateImage();
 			}
 		});
 	}
-	
+
 	private void updateImage() {
 		if (catImages[currentImageIndex] != null) {
 			textLabel.setText(String.format(CAT_IMAGE_MESSAGE, currentImageIndex + 1, numberOfImages));

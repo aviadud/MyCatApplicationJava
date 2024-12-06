@@ -19,8 +19,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class Utilities {
 
-	public static final String CAT_API_TOKEN_PATH = "CatApiToken"; /// < Path to the file with the token for catAPI
-	private static final String CAT_API_URL = "https://api.thecatapi.com/v1/images/search?limit=%d&api_key=%s"; /// <
+	public static final String CAT_API_TOKEN_PATH = "CatApiToken"; ///< Path to the file with the token for catAPI
+	private static final String CAT_API_URL = "https://api.thecatapi.com/v1/images/search?limit=%d&api_key=%s"; ///<
 																												/// URL
 																												/// format
 																												/// for
@@ -28,7 +28,7 @@ public class Utilities {
 																												/// the
 																												/// catAPI
 																												/// for
-																												/// images
+																												/// images.
 
 	/**
 	 * Take the token from the text file located at CAT_API_TOKEN_PATH and return
