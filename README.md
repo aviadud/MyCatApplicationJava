@@ -1,6 +1,12 @@
 # MyCatApplicationJava
 A lightweight Java Swing application that displays cat images retrieved from the [cat API](https://thecatapi.com/).
 
+## API token
+Before running the application there a need to provide a token for the cat API.
+The application will take the token from the text file "CatApiToken" that should be located in the directory the application is running from.
+A token can be generated from [the cat API website](https://thecatapi.com/).
+
+
 ## Purpose
 
 This project is part of my personal challenge to create basic GUI applications in a variety of programming languages.

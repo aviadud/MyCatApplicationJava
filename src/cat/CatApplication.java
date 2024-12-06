@@ -1,10 +1,10 @@
-/**
- * 
- */
 package cat;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+
+import cat.Utilities;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.event.ActionListener;
@@ -13,10 +13,9 @@ import java.net.URI;
 import java.util.List;
 import java.lang.Thread;
 
-import cat.Utilities;
-
 /**
- * 
+ * The main class to handle the act application.
+ * Flowing the singleton pattern design to prevent too more one instance of this window.
  */
 public class CatApplication {
 	public static final int NUMBER_OF_IMAGES = 25;
